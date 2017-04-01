@@ -3,67 +3,67 @@ const test = require('ava');
 
 const om = require('..');
 
-const i = om.interfaces;
+const t = om.types;
 
-const Position = om.interfaces('Position', i.Top, {
-	line: i.Number,
-	column: i.Number
+const Position = om.type('Position', t.Top, {
+	line: t.Number,
+	column: t.Number
 });
 
-const SourceLocation = om.interfaces('SourceLocation', i.Top, {
-	source: i.Sum(i.String, i.Null),
+const SourceLocation = om.type('SourceLocation', t.Top, {
+	source: t.Sum(t.String, t.Null),
 	start: Position,
 	end: Position
 });
 
-const Node = om.interface('Node', i.Top, {
-	type: i.String,
-	loc: i.Sum(SourceLocation, i.Null)
+const Node = om.type('Node', t.Top, {
+	type: t.String,
+	loc: t.Sum(SourceLocation, t.Null)
 })
 
-const Expression = om.interface('Expression', Node, {});
+const Expression = om.type('Expression', Node, {});
 
-const Identifier = om.interface('Identifier', Expression, {
+const Identifier = om.type('Identifier', Expression, {
 	type: 'Identifier',
-	name: i.String,
+	name: t.String,
 });
 
-const Program = om.interface('Program', Node, {
+const Statement = om.type('Statement', Node, {});
+
+const Program = om.type('Program', Node, {
 	type: 'Program',
-	body: i.Array(Statement)
+	body: t.Array(Statement)
 });
 
-const Statement = om.interface('Statement', Node, {});
-
-const BlockStatement = om.interface('BlockStatement', Statement, {
+const BlockStatement = om.type('BlockStatement', Statement, {
 	type: 'BlockStatement',
-	body: i.Array(Statement)
+	body: t.Array(Statement)
 });
 
-const Function = om.interface('Function', Node, {
-	id: i.Sum(Identifier, i.Null),
-	params: i.Array(Identifier),
+const Function = om.type('Function', Node, {
+	id: t.Sum(Identifier, t.Null),
+	params: t.Array(Identifier),
 	body: BlockStatement
 });
 
-const ExpressionStatement = om.interface('ExpressionStatement', Statement, {
+const ExpressionStatement = om.type('ExpressionStatement', Statement, {
 	type: 'ExpressionStatement',
 	expression: Statement
 });
 
-const ReturnStatement = om.interface('ReturnStatement', Statement, {
+const ReturnStatement = om.type('ReturnStatement', Statement, {
 	type: 'ReturnStatement',
-	argument: i.Sum(Expression, i.Null)
+	argument: t.Sum(Expression, t.Null)
 });
 
-const FunctionExpression = om.interface('FunctionExpression', i.Product(Function, Expression), {
+const FunctionExpression = om.type('FunctionExpression', t.Product(Function, Expression), {
 	type: 'FunctionExpression'
 });
 
-const CallExpression = om.interface('CallExpression', Expression, {
+const CallExpression = om.type('CallExpression', Expression, {
 	type: 'CallExpression',
 	callee: Expression,
-	arguments: i.Array(Expression)
+	arguments: t.Array(Expression)
 });
 
 const parseIdentifier = om.parser(
